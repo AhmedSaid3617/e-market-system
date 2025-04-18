@@ -64,8 +64,20 @@ paths:
       responses:
         '200':
           description: Successful login
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    description: The name of the user
+                  email:
+                    type: string
+                    format: email
+                    description: The email address of the user
 
-  /products/me/purchased:
+  /products/purchased:
     get:
       tags: [products]
       summary: Get products purchased by the current user
@@ -147,8 +159,29 @@ paths:
         '403':
           description: Unauthorized to delete this product
 
+  /products/analytics:
+    get:
+      tags: [products]
+      summary: Get product analytics
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total_products:
+                    type: integer
+                    description: Total number of products
+                  total_selling_products:
+                    type: integer
+                    description: Total number of products being sold
+                  total_purchased_products:
+                    type: integer
+                    description: Total number of products purchased
+          description: Product analytics
 
-  /products/me/selling:
+  /products/selling:
     get:
       tags: [products]
       summary: List products current user is selling
@@ -175,10 +208,17 @@ paths:
         '201':
           description: Product created
 
-  /products/feed:
+  /products:
     get:
       tags: [products]
       summary: Get the product feed
+      parameters:
+        - name: q
+          in: query
+          required: false
+          schema:
+            type: string
+            description: Search query for products
       responses:
         '200':
           content:
@@ -201,11 +241,19 @@ paths:
             type: string
       responses:
         '200':
-          description: Purchase successful
+          description: Created transaction session (For payment gateway)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  session_id:
+                    type: string
+                    description: The ID of the payment session
         '409':
           description: Product already purchased
 
-  /money/wallet:
+  /e-wallet:
     get:
       tags: [money]
       summary: Get wallet details
@@ -217,7 +265,35 @@ paths:
                   '$ref': '#/components/schemas/Wallet'
           description: Wallet info
 
-  /money/transactions:
+    post:
+      tags: [money]
+      summary: Add money to wallet
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                amount:
+                  type: number
+                  format: float
+                  description: The amount to add to the wallet
+              required:
+                - amount
+      responses:
+        '200':
+          description: Created payment session (For payment gateway)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  session_id:
+                    type: string
+                    description: The ID of the payment session
+
+  /e-wallet/transactions:
     get:
       tags: [money]
       summary: Get transaction history
@@ -231,7 +307,7 @@ paths:
                 '$ref': '#/components/schemas/Transaction'
           description: List of transactions
 
-  /authenticate/verify-token:
+  /auth/verify-token:
     post:
       tags: [authentication]
       summary: Verify JWT token
@@ -251,10 +327,17 @@ paths:
         '200':
           description: Token is valid
 
-  /authenticate/create-token:
+  /auth/create-token:
     post:
       tags: [authentication]
-      summary: Create a new JWT token
+      parameters:
+        - name: user_id
+          in: query
+          required: true
+          schema:
+            type: string
+            description: The user ID for whom to create the token
+      summary: Create a new JWT token for user (private API)
       responses:
         '200':
           description: Token created
@@ -309,8 +392,11 @@ components:
           description: Transaction date and time
         credit:
           type: number
-          description: User ID of the person who made the transaction
+          description: User ID of the person who made the transaction (service account id for external Bank)
         debit:
           type: number
           description: User ID of the person who received the transaction
+        done:
+          type: boolean
+          description: Whether the transaction is completed
 
