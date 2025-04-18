@@ -113,24 +113,9 @@ paths:
                     type: string
           description: Product details
 
-
-    post:
-      tags: [products]
-      summary: Create product
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              '$ref': '#/components/schemas/Product'
-
-      responses:
-        '201':
-          description: Product created
-
     put:
       tags: [products]
-      summary: Update product by ID
+      summary: Update product by ID (If the user is the owner)
       parameters:
         - name: id
           in: path
@@ -149,7 +134,7 @@ paths:
 
     delete:
       tags: [products]
-      summary: Delete product by ID
+      summary: Delete product by ID (If the user is the owner)
       parameters:
         - name: id
           in: path
@@ -159,6 +144,9 @@ paths:
       responses:
         '204':
           description: Product deleted
+        '403':
+          description: Unauthorized to delete this product
+
 
   /products/me/selling:
     get:
@@ -166,28 +154,26 @@ paths:
       summary: List products current user is selling
       responses:
         '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  '$ref': '#/components/schemas/Product'
           description: Selling products list
 
     post:
-      tags: [products]
-      summary: Add a product to sell
+      tags: [ products ]
+      summary: Create product
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              '$ref': '#/components/schemas/Product'
       responses:
         '201':
-          description: Product added
-
-    put:
-      tags: [products]
-      summary: Bulk update selling products
-      responses:
-        '200':
-          description: Selling products updated
-
-    delete:
-      tags: [products]
-      summary: Bulk delete selling products
-      responses:
-        '204':
-          description: Selling products deleted
+          description: Product created
 
   /products/feed:
     get:
@@ -206,7 +192,7 @@ paths:
   /products/buy/{id}:
     post:
       tags: [products]
-      summary: Buy a product by ID
+      summary: Buy a product by ID (Transfer money from wallet, Update stock)
       parameters:
         - name: id
           in: path
@@ -225,6 +211,10 @@ paths:
       summary: Get wallet details
       responses:
         '200':
+          content:
+            application/json:
+              schema:
+                  '$ref': '#/components/schemas/Wallet'
           description: Wallet info
 
   /money/transactions:
@@ -233,12 +223,30 @@ paths:
       summary: Get transaction history
       responses:
         '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                '$ref': '#/components/schemas/Transaction'
           description: List of transactions
 
   /authenticate/verify-token:
     post:
       tags: [authentication]
       summary: Verify JWT token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+                  description: The JWT token to verify
+              required:
+                - token
       responses:
         '200':
           description: Token is valid
@@ -250,6 +258,14 @@ paths:
       responses:
         '200':
           description: Token created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: The new JWT token
 
 components:
   schemas:
@@ -269,3 +285,32 @@ components:
         description:
           type: string
           description: The description of the product
+    Wallet:
+      type: object
+      properties:
+        balance:
+          type: number
+          format: float
+          description: The current balance in the wallet
+    Transaction:
+      type: object
+      description: Simple two-sided transaction
+      properties:
+        id:
+          type: string
+          description: Transaction ID
+        amount:
+          type: number
+          format: float
+          description: Transaction amount
+        date:
+          type: string
+          format: date-time
+          description: Transaction date and time
+        credit:
+          type: number
+          description: User ID of the person who made the transaction
+        debit:
+          type: number
+          description: User ID of the person who received the transaction
+
