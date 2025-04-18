@@ -20,7 +20,7 @@ component "AuthenticationService" as AuthService
 database "DB Cluster" as DB
 
 ' Connections from Frontend
-Frontend --> LB
+Frontend -> LB
 
 ' Load balancer routes to services
 LB --> AccountService
