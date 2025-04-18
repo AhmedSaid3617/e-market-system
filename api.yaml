@@ -1,0 +1,271 @@
+openapi: 3.0.0
+info:
+  title: Item Exchange Network API
+  version: 1.0.0
+
+paths:
+
+  /account/signup:
+    post:
+      tags: [account]
+      summary: User signup
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: The name of the user
+                email:
+                  type: string
+                  format: email
+                  description: The email address for the new account
+                password:
+                  type: string
+                  description: The password for the new account
+                  minLength: 8
+              required:
+                - name
+                - email
+                - password
+      responses:
+        '201':
+          description: Account created
+        '400':
+          description: Invalid request payload
+        '409':
+          description: Email already exists
+
+  /account/login:
+    post:
+      tags: [account]
+      summary: User login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  description: The email address for login
+                password:
+                  type: string
+                  description: The password for login
+              required:
+                - email
+                - password
+
+      responses:
+        '200':
+          description: Successful login
+
+  /products/me/purchased:
+    get:
+      tags: [products]
+      summary: Get products purchased by the current user
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  '$ref': '#/components/schemas/Product'
+          description: List of purchased products
+
+  /products/{id}:
+    get:
+      tags: [products]
+      summary: Get product by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: Product ID
+                  name:
+                    type: string
+                    description: Product name
+                  price:
+                    type: number
+                    format: float
+                    description: Product price
+                  picture_url:
+                    type: string
+                    description: Product picture URL
+                  description:
+                    type: string
+          description: Product details
+
+
+    post:
+      tags: [products]
+      summary: Create product
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              '$ref': '#/components/schemas/Product'
+
+      responses:
+        '201':
+          description: Product created
+
+    put:
+      tags: [products]
+      summary: Update product by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              '$ref': '#/components/schemas/Product'
+      responses:
+        '200':
+          description: Product updated
+
+    delete:
+      tags: [products]
+      summary: Delete product by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Product deleted
+
+  /products/me/selling:
+    get:
+      tags: [products]
+      summary: List products current user is selling
+      responses:
+        '200':
+          description: Selling products list
+
+    post:
+      tags: [products]
+      summary: Add a product to sell
+      responses:
+        '201':
+          description: Product added
+
+    put:
+      tags: [products]
+      summary: Bulk update selling products
+      responses:
+        '200':
+          description: Selling products updated
+
+    delete:
+      tags: [products]
+      summary: Bulk delete selling products
+      responses:
+        '204':
+          description: Selling products deleted
+
+  /products/feed:
+    get:
+      tags: [products]
+      summary: Get the product feed
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  '$ref': '#/components/schemas/Product'
+          description: Feed list
+
+  /products/buy/{id}:
+    post:
+      tags: [products]
+      summary: Buy a product by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Purchase successful
+        '409':
+          description: Product already purchased
+
+  /money/wallet:
+    get:
+      tags: [money]
+      summary: Get wallet details
+      responses:
+        '200':
+          description: Wallet info
+
+  /money/transactions:
+    get:
+      tags: [money]
+      summary: Get transaction history
+      responses:
+        '200':
+          description: List of transactions
+
+  /authenticate/verify-token:
+    post:
+      tags: [authentication]
+      summary: Verify JWT token
+      responses:
+        '200':
+          description: Token is valid
+
+  /authenticate/create-token:
+    post:
+      tags: [authentication]
+      summary: Create a new JWT token
+      responses:
+        '200':
+          description: Token created
+
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the product
+        price:
+          type: number
+          format: float
+          description: The price of the product
+        picture_url:
+          type: string
+          description: The URL of the product picture
+        description:
+          type: string
+          description: The description of the product
