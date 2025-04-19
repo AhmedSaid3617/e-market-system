@@ -13,7 +13,7 @@ component "Load Balancer\n(Nginx)" as LB
 ' Define services
 component "AccountService" as AccountService
 component "ProductService" as ProductService
-component "TransactionService" as TransactionService
+component "EWalletService" as TransactionService
 component "AuthenticationService" as AuthService
 
 ' Define DB cluster
