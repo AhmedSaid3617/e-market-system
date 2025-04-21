@@ -7,17 +7,24 @@ CREATE TABLE ACCOUNT
   PRIMARY KEY (account_id)
 );
 
-CREATE TABLE PRODUCT
-(
+-- Core product data (frequently accessed)
+CREATE TABLE PRODUCT_CORE (
   product_id INT NOT NULL,
-  name VARCHAR(100) NOT NULL,          -- Product names are text
-  description TEXT NOT NULL,           -- Descriptions can be longer text
-  price DECIMAL(10,2) NOT NULL,        -- Prices should be decimal for accuracy
-  on_sale BOOLEAN NOT NULL,            -- Sale status is true/false
+  name VARCHAR(100) NOT NULL,
+  price DECIMAL(10,2) NOT NULL,
+  on_sale BOOLEAN NOT NULL,
   creator_id INT NOT NULL,
   PRIMARY KEY (product_id),
   FOREIGN KEY (creator_id) REFERENCES ACCOUNT(account_id)
 );
+
+-- Product description (rarely accessed)
+CREATE TABLE PRODUCT_DESCRIPTION (
+  product_id INT NOT NULL PRIMARY KEY,
+  description TEXT NOT NULL,
+  FOREIGN KEY (product_id) REFERENCES PRODUCT_CORE(product_id)
+);
+
 
 CREATE TABLE PRODUCT_TRANSFER
 (
@@ -29,11 +36,23 @@ CREATE TABLE PRODUCT_TRANSFER
   FOREIGN KEY (product_id) REFERENCES PRODUCT(product_id)
 );
 
-CREATE TABLE MONEY_TRANSACTION
-(
-  amount DECIMAL(10,2) NOT NULL,       -- Monetary value should be decimal
-  timestamp TIMESTAMP NOT NULL,         -- Proper timestamp type
+-- Parent table partitioned by timestamp
+CREATE TABLE MONEY_TRANSACTION (
+  amount DECIMAL(10,2) NOT NULL,
+  timestamp TIMESTAMP NOT NULL,
   account_id INT NOT NULL,
   PRIMARY KEY (timestamp, account_id),
   FOREIGN KEY (account_id) REFERENCES ACCOUNT(account_id)
-);
+) PARTITION BY RANGE (timestamp);
+
+-- Partition for transactions in 2023
+CREATE TABLE MONEY_TRANSACTION_2023 PARTITION OF MONEY_TRANSACTION
+  FOR VALUES FROM ('2023-01-01') TO ('2024-01-01');
+
+-- Partition for transactions in 2024
+CREATE TABLE MONEY_TRANSACTION_2024 PARTITION OF MONEY_TRANSACTION
+  FOR VALUES FROM ('2024-01-01') TO ('2025-01-01');
+
+-- Partition for transactions in 2025
+CREATE TABLE MONEY_TRANSACTION_2025 PARTITION OF MONEY_TRANSACTION
+  FOR VALUES FROM ('2025-01-01') TO ('2026-01-01');
