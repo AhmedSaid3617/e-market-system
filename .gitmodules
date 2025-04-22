@@ -1,0 +1,9 @@
+[submodule "services/account"]
+	path = services/account
+	url = https://github.com/OmarTamer2/Parallel-project.git
+[submodule "services/products"]
+	path = services/products
+	url = https://github.com/KHMO02/Products_Services.git
+[submodule "frontend"]
+	path = frontend
+	url = https://github.com/MashaWaleed/Marketplace_React_Frontend.git
