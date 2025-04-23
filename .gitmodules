@@ -7,3 +7,6 @@
 [submodule "frontend"]
 	path = frontend
 	url = https://github.com/MashaWaleed/Marketplace_React_Frontend.git
+[submodule "services/authentication"]
+	path = services/authentication
+	url = https://github.com/shamsmm/e-market-auth-service.git
