@@ -21,6 +21,8 @@ services:
       context: frontend
     depends_on:
       - server
+    expose:
+      - 80
 
   # only published port on the master machine
   server:
@@ -63,5 +65,6 @@ services:
     build:
       context: services/e-wallet
     environment:
-      PORT: 3000
       DATABASE_URL: postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD}@db-master:5432/${POSTGRES_DATABASE:-postgres}
+    expose:
+      - 8000
