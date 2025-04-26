@@ -13,7 +13,7 @@ You may look at the `docker-compose.yml` file to see how the services are config
 You can run any service on any computer on any network, simply only run the desired service from docker-compose. For example, if you want to run the `account-service`, you can do so by running the following command:
 
 ```bash
-docker-compose up account-service
+docker-compose -f docker-compose.yml -f docker-compose.no-dependency.yml up account-service
 ```
 
 **But make sure** you copy `.env.example` to `.env` and set the environment variables if needed, and remove the `depends_on` section from that section in `docker-compose.yml` file.

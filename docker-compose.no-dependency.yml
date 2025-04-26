@@ -1,0 +1,12 @@
+services:
+  server:
+    depends_on: !reset []
+
+  account-service:
+    depends_on: !reset []
+
+  product-service:
+    depends_on: !reset []
+
+  e-wallet-service:
+    depends_on: !reset []
