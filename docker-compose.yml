@@ -3,6 +3,14 @@ services:
     image: "citusdata/citus:13.0.3"
     ports: [ "${DB_MASTER_EXTERNAL_PORT:-5432}:5432" ]
     labels: [ "com.citusdata.role=Master" ]
+    volumes:
+      - ./pg_healthcheck:/usr/local/bin/pg_healthcheck
+    healthcheck:
+      test: ["CMD", "/usr/local/bin/pg_healthcheck"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
     environment: &AUTH
       POSTGRES_USER: "${POSTGRES_USER:-postgres}"
       POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
@@ -19,14 +27,18 @@ services:
   frontend:
     build:
       context: frontend
-    depends_on:
-      - server
     expose:
       - 80
 
   # only published port on the master machine
   server:
     image: "nginx:1.27"
+    depends_on:
+      - frontend
+      - account-service
+      - product-service
+      - auth-service
+      - e-wallet-service
     ports:
       - "8899:80"
     volumes:
@@ -35,6 +47,9 @@ services:
   account-service:
     build:
       context: services/account
+    depends_on:
+      db-master:
+        condition: service_healthy
     environment:
       PORT: 3000
       POSTGRES_USER: "${POSTGRES_USER:-postgres}"
@@ -46,6 +61,9 @@ services:
   product-service:
     build:
       context: services/products
+    depends_on:
+      db-master:
+        condition: service_healthy
     environment:
       PORT: 3000
       POSTGRES_USER: "${POSTGRES_USER:-postgres}"
@@ -64,7 +82,13 @@ services:
   e-wallet-service:
     build:
       context: services/e-wallet
+    depends_on:
+      db-master:
+        condition: service_healthy
     environment:
-      DATABASE_URL: postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD}@db-master:5432/${POSTGRES_DATABASE:-postgres}
-    expose:
-      - 8000
+      PORT: 8000
+      POSTGRES_USER: "${POSTGRES_USER:-postgres}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+      POSTGRES_HOST: db-master
+      POSTGRES_PORT: 5432
+      POSTGRES_DATABASE: "${POSTGRES_DATABASE:-postgres}"
