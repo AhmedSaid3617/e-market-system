@@ -12,4 +12,4 @@
 	url = https://github.com/shamsmm/e-market-auth-service.git
 [submodule "services/e-wallet"]
 	path = services/e-wallet
-	url = git@github.com:YousefAmin2100994/software-.git
+	url = https://github.com/YousefAmin2100994/software-.git
