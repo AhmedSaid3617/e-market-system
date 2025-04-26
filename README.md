@@ -16,7 +16,7 @@ You can run any service on any computer on any network, simply only run the desi
 docker-compose -f docker-compose.yml -f docker-compose.no-dependency.yml up account-service
 ```
 
-**But make sure** you copy `.env.example` to `.env` and set the environment variables if needed, and remove the `depends_on` section from that section in `docker-compose.yml` file.
+**But make sure** you copy `.env.example` to `.env` and set the environment variables if needed (depends on the service you are running).
 
 ### All Services, Frontend and Database
 
@@ -25,4 +25,4 @@ If you want to run all the services, with database, frontend and everything, you
 docker-compose up
 ```
 
-**But make sure** you copy `.env.example` to `.env` and set the environment variables accordingly.
+**But make sure** you copy `.env.example` to `.env` and set the environment variables accordingly (most importantly SERVER_PORT which sets the port on which everything is accessed).
