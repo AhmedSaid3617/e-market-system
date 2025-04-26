@@ -1,9 +1,10 @@
 CREATE TABLE ACCOUNT
 (
   password_hash VARCHAR(255) NOT NULL,  -- Storing hashed passwords as strings
+  name VARCHAR(255) NOT NULL,
   email VARCHAR(255) NOT NULL,         -- Email addresses are text
   balance DECIMAL(10,2) NOT NULL,      -- Monetary value should be decimal
-  account_id INT NOT NULL,
+  account_id INT,
   PRIMARY KEY (account_id)
 );
 
