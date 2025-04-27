@@ -1,9 +1,11 @@
-x-environment-db: &DB
+x-environment-shared: &SHARED
   POSTGRES_USER: "${POSTGRES_USER:-postgres}"
   POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
   POSTGRES_HOST: "${POSTGRES_HOST:-db-master}"
   POSTGRES_PORT: "${POSTGRES_PORT:-5432}"
   POSTGRES_DATABASE: "${POSTGRES_DATABASE:-postgres}"
+  AUTH_HOST: "${AUTH_HOST:-auth-service}"
+  AUTH_PORT: "${AUTH_PORT:-3000}"
 
 services:
   db-master:
@@ -62,7 +64,7 @@ services:
         condition: service_healthy
     environment:
       PORT: 3000
-      <<: *DB
+      <<: *SHARED
 
   product-service:
     build:
@@ -72,7 +74,7 @@ services:
         condition: service_healthy
     environment:
       PORT: 3000
-      <<: *DB
+      <<: *SHARED
 
   auth-service:
     build:
@@ -89,4 +91,4 @@ services:
         condition: service_healthy
     environment:
       PORT: 8000
-      <<: *DB
+      <<: *SHARED
