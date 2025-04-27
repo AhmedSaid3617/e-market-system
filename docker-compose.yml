@@ -12,6 +12,7 @@ services:
     labels: [ "com.citusdata.role=Master" ]
     volumes:
       - ./pg_healthcheck:/usr/local/bin/pg_healthcheck
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/schema.sql
     healthcheck:
       test: ["CMD", "/usr/local/bin/pg_healthcheck"]
       interval: 5s
@@ -34,6 +35,8 @@ services:
   frontend:
     build:
       context: frontend
+      args:
+        VITE_API_BASE_URL: "http://localhost:${SERVER_PORT}/api"
     expose:
       - 80
 
