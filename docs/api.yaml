@@ -80,6 +80,8 @@ paths:
   /products/purchased:
     get:
       tags: [products]
+      security:
+        - bearerAuth: []
       summary: Get products purchased by the current user
       responses:
         '200':
@@ -127,6 +129,8 @@ paths:
 
     put:
       tags: [products]
+      security:
+        - bearerAuth: []
       summary: Update product by ID (If the user is the owner)
       parameters:
         - name: id
@@ -146,6 +150,8 @@ paths:
 
     delete:
       tags: [products]
+      security:
+        - bearerAuth: []
       summary: Delete product by ID (If the user is the owner)
       parameters:
         - name: id
@@ -162,6 +168,8 @@ paths:
   /products/analytics:
     get:
       tags: [products]
+      security:
+        - bearerAuth: []
       summary: Get product analytics
       responses:
         '200':
@@ -184,6 +192,8 @@ paths:
   /products/selling:
     get:
       tags: [products]
+      security:
+        - bearerAuth: []
       summary: List products current user is selling
       responses:
         '200':
@@ -197,6 +207,8 @@ paths:
 
     post:
       tags: [ products ]
+      security:
+        - bearerAuth: []
       summary: Create product
       requestBody:
         required: true
@@ -232,6 +244,8 @@ paths:
   /products/buy/{id}:
     post:
       tags: [products]
+      security:
+        - bearerAuth: []
       summary: Buy a product by ID (Transfer money from wallet, Update stock)
       parameters:
         - name: id
@@ -256,6 +270,8 @@ paths:
   /e-wallet:
     get:
       tags: [money]
+      security:
+        - bearerAuth: []
       summary: Get wallet details
       responses:
         '200':
@@ -267,6 +283,8 @@ paths:
 
     post:
       tags: [money]
+      security:
+        - bearerAuth: []
       summary: Add money to wallet
       requestBody:
         required: true
@@ -296,6 +314,8 @@ paths:
   /e-wallet/transactions:
     get:
       tags: [money]
+      security:
+        - bearerAuth: []
       summary: Get transaction history
       responses:
         '200':
@@ -326,6 +346,20 @@ paths:
       responses:
         '200':
           description: Token is valid
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  valid:
+                    type: boolean
+                    description: Whether the token is valid or not
+                  user:
+                    type: string
+                    description: The user ID associated with the token (if valid)
+                  error:
+                    type: string
+                    description: Error message if the token is invalid
 
   /auth/create-token:
     post:
@@ -351,6 +385,12 @@ paths:
                     description: The new JWT token
 
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: 'JWT Bearer token'
   schemas:
     Product:
       type: object
