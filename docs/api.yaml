@@ -237,6 +237,26 @@ paths:
       responses:
         '201':
           description: Product created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: Product ID
+                  name:
+                    type: string
+                    description: Product name
+                  price:
+                    type: number
+                    format: float
+                    description: Product price
+                  picture_url:
+                    type: string
+                    description: Product picture URL
+                  description:
+                    type: string
 
   /products:
     get:
