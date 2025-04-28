@@ -14,6 +14,7 @@ CREATE TABLE ACCOUNT
 CREATE TABLE PRODUCT
 (
   product_id SERIAL PRIMARY KEY,
+  picture_url VARCHAR(255) NOT NULL,       -- URLs are text
   name VARCHAR(100) NOT NULL,          -- Product names are text
   description TEXT NOT NULL,           -- Descriptions can be longer text
   price DECIMAL(10,2) NOT NULL,        -- Prices should be decimal for accuracy
