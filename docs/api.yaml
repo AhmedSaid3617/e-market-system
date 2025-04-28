@@ -39,6 +39,24 @@ paths:
         '409':
           description: Email already exists
 
+  /account/create-external-token:
+    post:
+      tags: [ account ]
+      security:
+        - bearerAuth: [ ]
+      summary: Create an External token for external stores integration
+      responses:
+        '200':
+          description: Token created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: The new JWT token
+
   /account/login:
     post:
       tags: [account]
