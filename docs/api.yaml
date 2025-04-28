@@ -284,7 +284,7 @@ paths:
       tags: [products]
       security:
         - bearerAuth: []
-      summary: Buy a product by ID (Transfer money from wallet, Update stock)
+      summary: Buy a product by ID (Transfer money from wallet, move product to purchased)
       parameters:
         - name: id
           in: path
@@ -293,15 +293,9 @@ paths:
             type: string
       responses:
         '200':
-          description: Created transaction session (For payment gateway)
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  session_id:
-                    type: string
-                    description: The ID of the payment session
+          description: Product transferred
+        '406':
+          description: Not enough money in wallet
         '409':
           description: Product already purchased
 
@@ -348,6 +342,34 @@ paths:
                   session_id:
                     type: string
                     description: The ID of the payment session
+
+  /e-wallet/transfer:
+    get:
+      tags: [ money ]
+      security:
+        - privateApi: []
+      summary: Transfer money between users (private API)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                amount:
+                  type: number
+                  format: float
+                  description: The amount to transfer
+                credit:
+                  type: string
+                  description: User ID of the person who made the transaction
+                debit:
+                  type: string
+                  description: User ID of the person who received the transaction
+      responses:
+        '200':
+          description: List of transactions
+        '406':
+          description: Not enough money in wallet
 
   /e-wallet/transactions:
     get:
@@ -429,6 +451,10 @@ components:
       scheme: bearer
       bearerFormat: JWT
       description: 'JWT Bearer token'
+    privateApi:
+      type: http
+      scheme: ip-address
+
   schemas:
     Product:
       type: object
