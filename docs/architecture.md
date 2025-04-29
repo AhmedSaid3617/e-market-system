@@ -5,6 +5,10 @@
 skinparam linetype ortho
 
 cloud {
+    component "External Stores" as ExternalStores
+}
+
+cloud {
 ' Define external services
 component "Payment Gateway\n(Paymob)" as PaymentGateway
 }
@@ -14,7 +18,7 @@ component "E-Market System\n" {
 component "Frontend (React.js)" as Frontend
 
 ' Define load balancer
-component "Load Balancer\n(Nginx)" as LB
+component "Load Balancer\nand API reverse proxy\n(Nginx)" as LB
 
 ' Define services
 component "AccountService" as AccountService
@@ -23,7 +27,17 @@ component "EWalletService" as TransactionService
 component "AuthenticationService" as AuthService
 
 ' Define DB cluster
-database "DB Cluster" as DB
+database "Logical DB" as DB {
+    database "Master DB" as MasterDB
+    database "Worker 1" as W1
+    database "Worker 2" as W2
+    database "Worker 3" as W3
+}
+
+' Define DB cluster connections
+MasterDB --> W1
+MasterDB --> W2
+MasterDB --> W3
 
 ' Connections from Frontend
 Frontend -> LB
@@ -44,11 +58,12 @@ note top of AuthService
 end note
 
 ' All services connect to DB cluster
-AccountService --> DB
-ProductService --> DB
-TransactionService --> DB
+AccountService ---> DB
+ProductService ---> DB
+TransactionService ---> DB
 }
 
 TransactionService <---> PaymentGateway
+ExternalStores <---> LB
 @enduml
 ```
