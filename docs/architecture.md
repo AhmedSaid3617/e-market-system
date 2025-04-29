@@ -15,19 +15,19 @@ component "Payment Gateway\n(Paymob)" as PaymentGateway
 
 component "E-Market System\n" {
 ' Define front-end
-component "Frontend (React.js)" as Frontend
+component "Frontend (React.js, Swagger UI)" as Frontend
 
 ' Define load balancer
-component "Load Balancer\nand API reverse proxy\n(Nginx)" as LB
+component "Load Balancer, Web Server\nand API reverse proxy\n(Nginx)" as LB
 
 ' Define services
-component "AccountService" as AccountService
-component "ProductService" as ProductService
-component "EWalletService" as TransactionService
-component "AuthenticationService" as AuthService
+component "Account Service (Node.js)" as AccountService
+component "Product Service (Node.js)" as ProductService
+component "E-Wallet Service (FastAPI)" as TransactionService
+component "Authentication Service (Node.js)" as AuthService
 
 ' Define DB cluster
-database "Logical DB" as DB {
+database "Logical DB (Postgres and Citus)" as DB {
     database "Master DB" as MasterDB
     database "Worker 1" as W1
     database "Worker 2" as W2
@@ -40,7 +40,7 @@ MasterDB --> W2
 MasterDB --> W3
 
 ' Connections from Frontend
-Frontend -> LB
+Frontend <-> LB
 
 ' Load balancer routes to services
 LB --> AccountService

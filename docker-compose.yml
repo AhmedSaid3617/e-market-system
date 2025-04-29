@@ -51,6 +51,7 @@ services:
       - product-service
       - auth-service
       - e-wallet-service
+      - api-docs
     ports:
       - "${SERVER_PORT}:80"
     volumes:
@@ -92,3 +93,13 @@ services:
     environment:
       PORT: 8000
       <<: *SHARED
+
+  api-docs:
+    image: swaggerapi/swagger-ui:v5.20.0
+    expose:
+      - 8080
+    volumes:
+      - ./docs/api-external.yaml:/usr/share/nginx/html/api.yaml:ro
+    environment:
+#      BASE_URL: /api/docs
+      URLS: "[{ url: '/api/docs/api.yaml', name: 'E-Market System API' }]"

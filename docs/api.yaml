@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
-  title: Item Exchange Network API
-  version: 1.0.0
+  title: E-Market System API
+  version: 1.9.0
 
 paths:
 

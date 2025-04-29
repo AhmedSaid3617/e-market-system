@@ -1,0 +1,183 @@
+openapi: 3.0.0
+info:
+  title: E-Market System External Store Integration API
+  version: 1.9.1
+
+paths:
+
+  /products/{id}:
+    get:
+      tags: [products]
+      summary: Get product by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: Product ID
+                  name:
+                    type: string
+                    description: Product name
+                  price:
+                    type: number
+                    format: float
+                    description: Product price
+                  picture_url:
+                    type: string
+                    description: Product picture URL
+                  description:
+                    type: string
+          description: Product details
+
+    put:
+      tags: [products]
+      security:
+        - bearerAuth: []
+      summary: Update product by ID (If the user is the owner)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              '$ref': '#/components/schemas/Product'
+      responses:
+        '200':
+          description: Product updated
+
+    delete:
+      tags: [products]
+      security:
+        - bearerAuth: []
+      summary: Delete product by ID (If the user is the owner)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Product deleted
+        '403':
+          description: Unauthorized to delete this product
+
+  /products/analytics:
+    get:
+      tags: [products]
+      security:
+        - bearerAuth: []
+      summary: Get product analytics
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total_products:
+                    type: integer
+                    description: Total number of products
+                  total_selling_products:
+                    type: integer
+                    description: Total number of products being sold
+                  total_purchased_products:
+                    type: integer
+                    description: Total number of products purchased
+          description: Product analytics
+
+  /products/selling:
+    get:
+      tags: [products]
+      security:
+        - bearerAuth: []
+      summary: List products current user is selling
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  '$ref': '#/components/schemas/Product'
+          description: Selling products list
+
+    post:
+      tags: [ products ]
+      security:
+        - bearerAuth: []
+      summary: Create product
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              '$ref': '#/components/schemas/Product'
+      responses:
+        '201':
+          description: Product created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: Product ID
+                  name:
+                    type: string
+                    description: Product name
+                  price:
+                    type: number
+                    format: float
+                    description: Product price
+                  picture_url:
+                    type: string
+                    description: Product picture URL
+                  description:
+                    type: string
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: 'JWT Bearer token'
+    privateApi:
+      type: http
+      scheme: ip-address
+
+  schemas:
+    Product:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the product
+        price:
+          type: number
+          format: float
+          description: The price of the product
+        picture_url:
+          type: string
+          description: The URL of the product picture
+        description:
+          type: string
+          description: The description of the product
+
