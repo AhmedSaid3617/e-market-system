@@ -4,6 +4,12 @@
 @startuml
 skinparam linetype ortho
 
+cloud {
+' Define external services
+component "Payment Gateway\n(Paymob)" as PaymentGateway
+}
+
+component "E-Market System\n" {
 ' Define front-end
 component "Frontend (React.js)" as Frontend
 
@@ -41,6 +47,8 @@ end note
 AccountService --> DB
 ProductService --> DB
 TransactionService --> DB
+}
 
+TransactionService <---> PaymentGateway
 @enduml
 ```
