@@ -101,5 +101,4 @@ services:
     volumes:
       - ./docs/api-external.yaml:/usr/share/nginx/html/api.yaml:ro
     environment:
-#      BASE_URL: /api/docs
       URLS: "[{ url: '/api/docs/api.yaml', name: 'E-Market System API' }]"
