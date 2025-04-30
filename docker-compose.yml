@@ -14,13 +14,16 @@ services:
     labels: [ "com.citusdata.role=Master" ]
     volumes:
       - ./pg_healthcheck:/usr/local/bin/pg_healthcheck
-      - ./database/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
       test: ["CMD", "/usr/local/bin/pg_healthcheck"]
       interval: 5s
       timeout: 5s
       retries: 5
       start_period: 10s
+    depends_on:
+      db-worker:
+        condition: service_healthy
     environment: &AUTH
       POSTGRES_USER: "${POSTGRES_USER:-postgres}"
       POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
@@ -32,6 +35,8 @@ services:
   db-worker:
     image: "citusdata/citus:13.0.3"
     labels: [ "com.citusdata.role=Worker" ]
+    deploy:
+      replicas: 3
     environment: *AUTH
 
   frontend:
@@ -92,6 +97,10 @@ services:
         condition: service_healthy
     environment:
       PORT: 8000
+      PAYMOB_API_KEY: "${PAYMOB_API_KEY}"
+      PAYMOB_API_PUBLIC_KEY: "${PAYMOB_API_PUBLIC_KEY}"
+      PAYMOB_API_SECRET_KEY: "${PAYMOB_API_SECRET_KEY}"
+      PAYMOB_INTEGRATION_ID: "${PAYMOB_INTEGRATION_ID}"
       <<: *SHARED
 
   api-docs:

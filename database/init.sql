@@ -1,4 +1,4 @@
--- schema.sql
+-- init.sql
 -- This SQL script creates the database schema for e-market system.
 -- This is in PostgreSQL syntax, for SQLite, replace `SERIAL PRIMARY KEY` with `INTEGER PRIMARY KEY`
 
@@ -41,3 +41,15 @@ CREATE TABLE MONEY_TRANSACTION
   PRIMARY KEY (timestamp, account_id),
   FOREIGN KEY (account_id) REFERENCES ACCOUNT(account_id)
 );
+
+-- citus extension
+-- Add 3 sharding workers
+SELECT * FROM citus_add_node('orchestrated-environment-db-worker-1', 5432);
+SELECT * FROM citus_add_node('orchestrated-environment-db-worker-2', 5432);
+SELECT * FROM citus_add_node('orchestrated-environment-db-worker-3', 5432);
+
+-- Distribute data
+SELECT create_reference_table('ACCOUNT');
+SELECT create_reference_table('PRODUCT');
+SELECT create_distributed_table('PRODUCT_TRANSFER', 'buyer_id');
+SELECT create_distributed_table('MONEY_TRANSACTION', 'account_id');
