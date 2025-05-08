@@ -204,10 +204,13 @@ paths:
                 properties:
                   total_products:
                     type: integer
-                    description: Total number of products
+                    description: Total number of products bought or purchased
                   total_selling_products:
                     type: integer
-                    description: Total number of products being sold
+                    description: Total number of products being actively sold
+                  total_sold_products:
+                    type: integer
+                    description: Total number of products sold
                   total_purchased_products:
                     type: integer
                     description: Total number of products purchased
