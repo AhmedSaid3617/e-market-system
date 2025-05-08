@@ -345,9 +345,9 @@ paths:
               schema:
                 type: object
                 properties:
-                  session_id:
+                  payment_url:
                     type: string
-                    description: The ID of the payment session
+                    description: URL of the payment session
 
   /e-wallet/transfer:
     get:
