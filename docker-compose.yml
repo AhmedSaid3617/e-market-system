@@ -92,6 +92,8 @@ services:
         condition: service_healthy
     environment:
       PORT: 3000
+      E_WALLET_HOST: "${E_WALLET_HOST:-e-wallet-service}"
+      E_WALLET_PORT: "${E_WALLET_PORT:-8000}"
       <<: *SHARED
 
   auth-service:
@@ -109,6 +111,7 @@ services:
         condition: service_healthy
     environment:
       PORT: 8000
+#      TRUST_HOST: "${TRUST_HOST:-product-service}"
       PAYMOB_API_KEY: "${PAYMOB_API_KEY}"
       PAYMOB_API_PUBLIC_KEY: "${PAYMOB_API_PUBLIC_KEY}"
       PAYMOB_API_SECRET_KEY: "${PAYMOB_API_SECRET_KEY}"

@@ -353,7 +353,7 @@ paths:
                     description: URL of the payment session
 
   /e-wallet/transfer:
-    get:
+    post:
       tags: [ money ]
       security:
         - privateApi: []
