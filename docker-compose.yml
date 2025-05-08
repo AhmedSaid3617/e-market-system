@@ -7,6 +7,18 @@ x-environment-shared: &SHARED
   AUTH_HOST: "${AUTH_HOST:-auth-service}"
   AUTH_PORT: "${AUTH_PORT:-3000}"
 
+x-db-auth-shared: &DB_AUTH
+  POSTGRES_USER: "${POSTGRES_USER:-postgres}"
+  POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+  PGUSER: "${POSTGRES_USER:-postgres}"
+  PGPASSWORD: "${POSTGRES_PASSWORD}"
+  POSTGRES_HOST_AUTH_METHOD: "${POSTGRES_HOST_AUTH_METHOD:-trust}"
+
+x-db-worker-shared: &DB_WORKER_SHARED
+  image: "citusdata/citus:13.0.3"
+  labels: [ "com.citusdata.role=Worker" ]
+  environment: *DB_AUTH
+
 services:
   db-master:
     image: "citusdata/citus:13.0.3"
@@ -22,22 +34,22 @@ services:
       retries: 5
       start_period: 10s
     depends_on:
-      db-worker:
+      db-worker-1:
         condition: service_healthy
-    environment: &AUTH
-      POSTGRES_USER: "${POSTGRES_USER:-postgres}"
-      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
-      PGUSER: "${POSTGRES_USER:-postgres}"
-      PGPASSWORD: "${POSTGRES_PASSWORD}"
-      POSTGRES_HOST_AUTH_METHOD: "${POSTGRES_HOST_AUTH_METHOD:-trust}"
+      db-worker-2:
+        condition: service_healthy
+      db-worker-3:
+        condition: service_healthy
+    environment: *DB_AUTH
 
-  # can scale this and replicate as much as needed
-  db-worker:
-    image: "citusdata/citus:13.0.3"
-    labels: [ "com.citusdata.role=Worker" ]
-    deploy:
-      replicas: 3
-    environment: *AUTH
+  db-worker-1:
+    <<: *DB_WORKER_SHARED
+
+  db-worker-2:
+    <<: *DB_WORKER_SHARED
+
+  db-worker-3:
+    <<: *DB_WORKER_SHARED
 
   frontend:
     build:

@@ -11,6 +11,13 @@ CREATE TABLE ACCOUNT
   account_id SERIAL PRIMARY KEY
 );
 
+CREATE TABLE ACCOUNT_PREFERENCES
+(
+    account_id SERIAL PRIMARY KEY,
+
+    FOREIGN KEY (account_id) REFERENCES ACCOUNT(account_id)
+);
+
 CREATE TABLE PRODUCT
 (
   product_id SERIAL PRIMARY KEY,
@@ -44,9 +51,9 @@ CREATE TABLE MONEY_TRANSACTION
 
 -- citus extension
 -- Add 3 sharding workers
-SELECT * FROM citus_add_node('orchestrated-environment-db-worker-1', 5432);
-SELECT * FROM citus_add_node('orchestrated-environment-db-worker-2', 5432);
-SELECT * FROM citus_add_node('orchestrated-environment-db-worker-3', 5432);
+SELECT * FROM citus_add_node('db-worker-1', 5432);
+SELECT * FROM citus_add_node('db-worker-2', 5432);
+SELECT * FROM citus_add_node('db-worker-3', 5432);
 
 -- Distribute data
 SELECT create_reference_table('ACCOUNT');
