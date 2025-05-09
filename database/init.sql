@@ -58,6 +58,8 @@ CREATE TABLE MONEY_TRANSACTION
 );
 
 -- citus extension
+CREATE EXTENSION IF NOT EXISTS citus;
+
 -- Add 3 sharding workers into single logical db
 SELECT * FROM citus_add_node('db-worker-1', 5432);
 SELECT * FROM citus_add_node('db-worker-2', 5432);
