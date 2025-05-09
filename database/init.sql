@@ -13,9 +13,17 @@ CREATE TABLE ACCOUNT
 
 CREATE TABLE ACCOUNT_PREFERENCES
 (
-    account_id SERIAL PRIMARY KEY,
+    account_id INTEGER PRIMARY KEY REFERENCES ACCOUNT(account_id),
+    language VARCHAR(10) DEFAULT 'en',
+    theme VARCHAR(50) DEFAULT 'light',
+    notifications_enabled BOOLEAN DEFAULT TRUE
+);
 
-    FOREIGN KEY (account_id) REFERENCES ACCOUNT(account_id)
+CREATE TABLE ACCOUNT_METADATA
+(
+    account_id INTEGER PRIMARY KEY REFERENCES ACCOUNT(account_id),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    last_login TIMESTAMP
 );
 
 CREATE TABLE PRODUCT
@@ -50,7 +58,7 @@ CREATE TABLE MONEY_TRANSACTION
 );
 
 -- citus extension
--- Add 3 sharding workers
+-- Add 3 sharding workers into single logical db
 SELECT * FROM citus_add_node('db-worker-1', 5432);
 SELECT * FROM citus_add_node('db-worker-2', 5432);
 SELECT * FROM citus_add_node('db-worker-3', 5432);
@@ -59,4 +67,6 @@ SELECT * FROM citus_add_node('db-worker-3', 5432);
 SELECT create_reference_table('ACCOUNT');
 SELECT create_reference_table('PRODUCT');
 SELECT create_distributed_table('PRODUCT_TRANSFER', 'buyer_id');
+SELECT create_distributed_table('ACCOUNT_PREFERENCES', 'account_id');
+SELECT create_distributed_table('ACCOUNT_METADATA', 'account_id');
 SELECT create_distributed_table('MONEY_TRANSACTION', 'account_id');
