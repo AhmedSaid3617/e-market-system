@@ -39,6 +39,59 @@ paths:
         '409':
           description: Email already exists
 
+  /account/info:
+    get:
+      tags: [account]
+      summary: Retrieve account information
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response with account details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  account_id:
+                    type: integer
+                    description: The unique identifier for the account.
+                    example: 2
+                  language:
+                    type: string
+                    description: The user's preferred language.
+                    example: "en"
+                  theme:
+                    type: string
+                    description: The user's preferred theme.
+                    example: "light"
+                  notifications_enabled:
+                    type: integer
+                    description: Indicates whether notifications are enabled (1) or disabled (0).
+                    example: 1
+                  created_at:
+                    type: string
+                    format: date-time
+                    description: The timestamp when the account was created.
+                    example: "2025-05-11T14:57:09Z"
+                  last_login:
+                    type: string
+                    format: date-time
+                    description: The timestamp of the user's last login.  May be null.
+                    nullable: true
+                    example: null
+        '401':
+          description: Unauthorized - Authentication required
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error message.
+                    example: "Unauthorized"
+
   /account/create-external-token:
     post:
       tags: [ account ]
