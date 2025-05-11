@@ -18,6 +18,8 @@ docker-compose -f docker-compose.yml -f docker-compose.no-dependency.yml up acco
 
 **But make sure** you copy `.env.example` to `.env` and set the environment variables if needed (depends on the service you are running).
 
+For machine that will run server, **should update nginx.conf** to reflect actual server endpoints, remove frontend entry, update `Access-Control-Allow-Origin` to reflect new machine running the frontend.
+
 ### All Services, Frontend and Database
 
 If you want to run all the services, with database, frontend and everything, you can do so by running the following command:
