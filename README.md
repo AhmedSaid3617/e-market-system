@@ -1,30 +1,35 @@
 # E-Market System
 
-This is a distributed, microservices-based e-commerce system designed to handle various functionalities such as user management, product management, order processing, and payment processing.
+This is a distributed, microservices-based e-commerce system designed to handle various functionalities such as user management, product management, and payment processing.
 
-## How to Run
+## Running the System
 
-This repo adds all other repos as submodules, make sure to clone the repo with the `--recurse-submodules` option.
+### Prerequisites
+- Docker
+- Docker Compose
 
-You may look at the `docker-compose.yml` file to see how the services are configured.
+### Steps to Run
 
-### Single Service
-
-You can run any service on any computer on any network, simply only run the desired service from docker-compose. For example, if you want to run the `account-service`, you can do so by running the following command:
-
+1 - Clone the repository with submodules:
 ```bash
-docker-compose -f docker-compose.yml -f docker-compose.no-dependency.yml up account-service
+git clone --recurse-submodules <repo-url>
 ```
 
-**But make sure** you copy `.env.example` to `.env` and set the environment variables if needed (depends on the service you are running).
+2 - If there is no `.env` file, copy the `.env.example` file to `.env` and set the environment variables accordingly. Most importantly, set `SERVER_PORT` which determines the port on which everything is accessed.
 
-For machine that will run server, **should update nginx.conf** to reflect actual server endpoints, remove frontend entry, update `Access-Control-Allow-Origin` to reflect new machine running the frontend.
-
-### All Services, Frontend and Database
-
-If you want to run all the services, with database, frontend and everything, you can do so by running the following command:
+3 - Build all the services, with database, frontend and everything:
 ```bash
-docker-compose up
+docker compose build
 ```
 
-**But make sure** you copy `.env.example` to `.env` and set the environment variables accordingly (most importantly SERVER_PORT which sets the port on which everything is accessed).
+4- Run all the services, with database, frontend and everything:
+```bash
+docker compose up
+```
+
+5 - Go to `http://localhost:8899` in your browser to access the frontend.
+
+6 - To close the services, run:
+```bash
+docker compose down
+```
